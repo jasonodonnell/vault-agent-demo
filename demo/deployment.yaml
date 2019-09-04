@@ -16,6 +16,13 @@ spec:
         - name: vault-agent
           image: hashicorp/vault-agent:0.0.1
           imagePullPolicy: IfNotPresent
+          env:
+          - name: VAULT_ADDR
+            value: http://vault:8200
+          - name: VAULT_SECRET_DB_USERNAME
+            value: "secret/demo:/vault/secrets/db-username"
+          - name: VAULT_SECRET_DB_PASSWORD
+            value: "secret/demo:/vault/secrets/db-password"
           volumeMounts:
             - name: vault-secrets
               mountPath: /vault/secrets
