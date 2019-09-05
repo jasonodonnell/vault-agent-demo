@@ -7,16 +7,21 @@ HashiConf Demo!
 * `openssl`
 * `kubectl`: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 * Minikube: https://minikube.sigs.k8s.io/docs/start/
+* Virtualbox: https://www.virtualbox.org
 * Helm: https://helm.sh/docs/using_helm/
 
 ## Minikube 
 
-Install helm notes here
+```bash
+minikube start
+helm init --history-max 200
+```
 
 ## Build
 
 ```bash
 cd ./src
+eval $(minikube docker-env)
 make build
 ```
 

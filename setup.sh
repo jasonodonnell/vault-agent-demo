@@ -17,7 +17,8 @@ ${DIR?}/configs/webhook-tls-generator.sh \
 kubectl label secret vault-injector-certs app=vault-agent-demo \
     --namespace=${NAMESPACE?}
 
-sed -i "s/^    caBundle:.*/    caBundle: \"${CA_BUNDLE?}\"/" ${DIR?}/helm/values.yaml
+sed "s/^    caBundle:.*/    caBundle: \"${CA_BUNDLE?}\"/" ${DIR?}/helm/values.yaml > /tmp/values.yaml
+cp /tmp/values.yaml ${DIR?}/helm/values.yaml
 
 kubectl create secret generic demo-vault \
     --from-file ${DIR?}/configs/policy.hcl \
