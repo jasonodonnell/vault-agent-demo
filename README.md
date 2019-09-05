@@ -54,6 +54,8 @@ In a separate terminal:
 $ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8200:8200 
 ```
 
+Patch the annotations:
+
 ```bash
 $ ./patch.sh
 ```
