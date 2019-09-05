@@ -46,6 +46,20 @@ $ kubectl exec -ti vault-0 -- /vault/userconfig/demo-vault/bootstrap.sh
 $ cd ../app
 
 $ ./run.sh
+```
 
+In a separate terminal:
+
+```bash
+$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8200:8200 
+```
+
+```bash
 $ ./patch.sh
+```
+
+Will need to restart `port-forward` since the name changed:
+
+```bash
+$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8200:8200
 ```
