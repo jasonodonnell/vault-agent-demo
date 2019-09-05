@@ -13,16 +13,19 @@ HashiConf Demo!
 ## Minikube 
 
 ```bash
-minikube start
-helm init --history-max 200
+$ minikube start
+
+$ helm init --history-max 200
 ```
 
 ## Build
 
 ```bash
-cd ./src
-eval $(minikube docker-env)
-make build
+$ cd ./src
+
+$ eval $(minikube docker-env)
+
+$ make build
 ```
 
 ## Setup Vault
