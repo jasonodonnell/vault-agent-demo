@@ -51,7 +51,11 @@ $ ./run.sh
 In a separate terminal:
 
 ```bash
-$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8200:8200 
+$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8080:8080
+```
+
+```bash
+$ open "http://127.0.0.1:8080"
 ```
 
 Patch the annotations:
@@ -63,5 +67,5 @@ $ ./patch.sh
 Will need to restart `port-forward` since the name changed:
 
 ```bash
-$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8200:8200
+$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8080:8080
 ```
