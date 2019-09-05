@@ -31,6 +31,8 @@ $ make build
 ## Setup Vault
 
 ```bash
+$ cd ..
+
 $ ./setup.sh
 
 $ cd helm/
