@@ -7,3 +7,6 @@ DEPLOY="deployment,pod,replicaset,service,statefulset"
 OBJECTS="${CONFIG?},${DEPLOY?}"
 
 kubectl delete ${OBJECTS?} --selector=app=vault-agent-demo
+
+helm delete --purge vault
+kubectl delete pvc --all
