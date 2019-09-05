@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 type NotFoundRedirectRespWr struct {
@@ -41,6 +43,13 @@ func main() {
 	if path == "" {
 		path = "/vault/secrets"
 	}
+
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		os.Exit(0)
+	}()
 
 	fs := Wrap(http.FileServer(http.Dir(path)))
 	http.HandleFunc("/", fs)
