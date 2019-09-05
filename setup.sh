@@ -1,10 +1,13 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-NAMESPACE=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+NAMESPACE='demo'
 export CA_BUNDLE=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
 
 ${DIR?}/cleanup.sh
+
+kubectl create namespace demo
+kubectl config set-context --current --namespace=demo
 
 ${DIR?}/configs/webhook-tls-generator.sh \
     --service vault-injector-svc \

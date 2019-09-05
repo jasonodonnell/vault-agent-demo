@@ -2,6 +2,17 @@
 
 HashiConf Demo!
 
+## Requirements
+
+* `openssl`
+* `kubectl`: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+* Minikube: https://minikube.sigs.k8s.io/docs/start/
+* Helm: https://helm.sh/docs/using_helm/
+
+## Minikube 
+
+Install helm notes here
+
 ## Build
 
 ```bash

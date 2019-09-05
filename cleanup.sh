@@ -10,3 +10,4 @@ kubectl delete ${OBJECTS?} --selector=app=vault-agent-demo
 
 helm delete --purge vault
 kubectl delete pvc --all
+kubectl delete namespace demo
