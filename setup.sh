@@ -16,9 +16,10 @@ kubectl label secret vault-injector-certs app=vault-agent-demo \
 
 sed -i "s/^    caBundle:.*/    caBundle: \"${CA_BUNDLE?}\"/" ${DIR?}/helm/values.yaml
 
-kubectl create configmap demo-vault-policy \
+kubectl create secret generic demo-vault \
     --from-file ${DIR?}/configs/policy.hcl \
+    --from-file ${DIR?}/configs/bootstrap.sh \
     --namespace=${NAMESPACE?}
 
-kubectl label configmap demo-vault-policy app=vault-agent-demo \
+kubectl label secret demo-vault app=vault-agent-demo \
     --namespace=${NAMESPACE?}

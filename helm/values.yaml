@@ -54,8 +54,8 @@ server:
   # to Vault in the path `/vault/userconfig/<name>/`. The value below is
   # an array of objects, examples are shown below.
   extraVolumes:
-    - type: configMap
-      name: demo-vault-policy
+    - type: secret
+      name: demo-vault
       path: null # default is `/vault/userconfig`
 
   # Affinity Settings

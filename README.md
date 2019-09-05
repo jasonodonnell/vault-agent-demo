@@ -5,13 +5,13 @@ HashiConf Demo!
 ## Setup Vault
 
 ```bash
-$ helm install --name=vault --set='server.authDelegator.enabled=true' .
+$ helm install --name=vault .
 
-$ kubectl exec -ti vault-0 -- vault operator init -n 1 -t 1
+$ kubectl exec -ti vault-0 /bin/sh 
 
-$ kubectl exec -ti vault-0 -- vault operator unseal
+$ vault operator init -n 1 -t 1
 
-$ kubectl exec -ti vault-0 /bin/sh
+$ vault operator unseal
 
 $ vault login
 
