@@ -54,6 +54,8 @@ In a separate terminal:
 $ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8080:8080
 ```
 
+Open the webpage:
+
 ```bash
 $ open "http://127.0.0.1:8080"
 ```
@@ -68,4 +70,10 @@ Will need to restart `port-forward` since the name changed:
 
 ```bash
 $ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8080:8080
+```
+
+Open the webpage:
+
+```bash
+$ open "http://127.0.0.1:8080"
 ```
