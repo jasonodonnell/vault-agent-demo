@@ -26,7 +26,19 @@ vault write auth/kubernetes/role/demo \
     policies=demo \
     ttl=1h
 
-vault secrets enable -path=secret/ kv
+vault secrets enable database
 
-vault kv put secret/db-username username=demo
-vault kv put secret/db-password password=mypassword
+vault write database/config/postgresql \
+    plugin_name=postgresql-database-plugin \
+    allowed_roles="db-app" \
+    connection_url="postgresql://{{username}}:{{password}}@postgres:5432/postgres?sslmode=disable" \
+    username="vault" \
+    password="vault"
+
+vault write database/roles/db-app \
+    db_name=postgresql \
+    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+    revocation_statements="ALTER ROLE \"{{name}}\" NOLOGIN;"\
+    default_ttl="1h" \
+    max_ttl="24h"

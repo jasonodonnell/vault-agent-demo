@@ -6,10 +6,4 @@ CONFIG="configmap,serviceaccount,secret"
 DEPLOY="deployment,pod,replicaset,service,statefulset"
 OBJECTS="${CONFIG?},${DEPLOY?}"
 
-kubectl delete ${OBJECTS?} --selector=app=vault-agent-demo
-
-helm delete --purge vault
-kubectl delete pvc --all
-kubectl delete namespace demo
-
-${DIR?}/postgres/cleanup.sh
+kubectl delete ${OBJECTS?} --selector=app=postgres

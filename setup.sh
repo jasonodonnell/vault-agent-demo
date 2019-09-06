@@ -27,3 +27,5 @@ kubectl create secret generic demo-vault \
 
 kubectl label secret demo-vault app=vault-agent-demo \
     --namespace=${NAMESPACE?}
+
+${DIR?}/postgres/run.sh
