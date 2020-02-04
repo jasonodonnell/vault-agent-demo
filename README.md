@@ -1,81 +1,65 @@
-# Vault Agent Demo
+# Vault Agent Injector Example
 
-HashiConf Demo!
+Run the setup script that installs:
 
-## Requirements
-
-* `openssl`
-* `kubectl`: https://kubernetes.io/docs/tasks/tools/install-kubectl/
-* Minikube: https://minikube.sigs.k8s.io/docs/start/
-* Virtualbox: https://www.virtualbox.org
-* Helm: https://helm.sh/docs/using_helm/
-
-## Minikube 
+* Vault
+* Vault Agent Injector
+* PostgreSQL (for example)
 
 ```bash
-$ minikube start
-
-$ helm init --history-max 200
+./setup.sh
 ```
 
-## Build
+## App
+
+Run the app demo:
 
 ```bash
-$ cd ./src
-
-$ eval $(minikube docker-env)
-
-$ make build
+cd ./examples/app
+./run.sh
 ```
 
-## Setup Vault
+Observe no secrets/sidecars on the app pod:
 
 ```bash
-$ cd ..
-
-$ ./setup.sh
-
-$ cd helm/
-
-$ helm install --name=vault .
-
-$ kubectl exec -ti vault-0 -- /vault/userconfig/demo-vault/bootstrap.sh
+kubectl describe pod <name of pod> -n app
+kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
 ```
 
-## Demo
+Patch the app:
 
 ```bash
-$ cd ../app
-
-$ ./run.sh
+./patch.sh
 ```
 
-In a separate terminal:
+Observe the secrets at:
 
 ```bash
-$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8080:8080
+kubectl describe pod <name of pod> -n app
+kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
 ```
 
-Open the webpage:
+Port forward and open the webpage:
 
 ```bash
-$ open "http://127.0.0.1:8080"
+kubectl port-forward <name of app pod> -n app 8080:8080
+open https://127.0.0.1:8080
 ```
 
-Patch the annotations:
+## Job (PostgreSQL Logical Backup)
+
+Run the `pg_dump` job:
 
 ```bash
-$ ./patch.sh
+cd ./examples/pg_dump
+./run.sh
+
+kubectl get pods -n app
 ```
 
-Will need to restart `port-forward` since the name changed:
+Observe the logs to show that it connected to PostgreSQL and created a logical 
+backup to `/dev/stdout`:
 
 ```bash
-$ kubectl port-forward $(kubectl get pod -l "app=vault-agent-demo" -o name) 8080:8080
-```
-
-Open the webpage:
-
-```bash
-$ open "http://127.0.0.1:8080"
+kubectl logs -n app <name of job pod>
 ```

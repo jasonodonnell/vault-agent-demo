@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-[ -z ${service} ] && service=vault-injector-svc
+[ -z ${service} ] && service=vault-agent-injector-svc
 [ -z ${secret} ] && secret=vault-injector-certs
 [ -z ${namespace} ] && namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}')
 

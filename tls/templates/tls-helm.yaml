@@ -1,0 +1,38 @@
+{{ $caValid := printf "%d" .Values.tls.ca.valid | int }}
+{{ $serverValid := printf "%d" .Values.tls.server.valid | int }}
+{{ $clientValid := printf "%d" .Values.tls.client.valid | int }}
+{{ $ca := genCA "svc-vault-ca" ( .Values.tls.ca.valid | int ) }}
+{{ $cn := printf "%s.%s.svc.cluster.local" .Values.tls.server.name .Release.Namespace }}
+{{ $dns1:= $cn }}
+{{ $dns2 := printf "%s.%s" .Values.tls.server.name .Release.Namespace }}
+{{ $dns3 := printf "%s.%s.svc" .Values.tls.server.name .Release.Namespace }}
+{{ $server := genSignedCert $cn (list "127.0.0.1") (list $dns1 $dns2 $dns3) ( .Values.tls.server.valid | int ) $ca }}
+{{ $client := genSignedCert "" nil (list $dns1 $dns2 $dns3 ) ( .Values.tls.client.valid | int ) $ca }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "tls-test.fullname" . }}-server
+  labels:
+    app: {{ template "tls-test.name" . }}-server
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+data:
+  ca.crt: {{ b64enc $ca.Cert }}
+  server.crt: {{ b64enc $server.Cert }}
+  server.key: {{ b64enc $server.Key }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "tls-test.fullname" . }}-client
+  labels:
+    app: {{ template "tls-test.name" . }}-client
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+data:
+  ca.crt: {{ b64enc $ca.Cert }}
+  client.crt: {{ b64enc $client.Cert }}
+  client.key: {{ b64enc $client.Key }}

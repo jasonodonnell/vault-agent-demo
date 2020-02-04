@@ -1,0 +1,10 @@
+
+tls:
+  ca:
+    name: "svc-vault-ca"
+    valid: 3650
+  server:
+    name: "vault"
+    valid: 365
+  client:
+    valid: 365

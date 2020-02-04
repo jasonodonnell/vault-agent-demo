@@ -6,4 +6,4 @@ CONFIG="configmap,serviceaccount,secret"
 DEPLOY="deployment,pod,replicaset,service,statefulset"
 OBJECTS="${CONFIG?},${DEPLOY?}"
 
-kubectl delete ${OBJECTS?} --selector=app=postgres
+kubectl delete ${OBJECTS?} --selector=app=postgres --namespace=postgres

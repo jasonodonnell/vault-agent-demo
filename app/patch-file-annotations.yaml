@@ -1,7 +1,0 @@
-spec:
-  template:
-    metadata:
-      annotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/vault-service: "http://vault:8200"
-        vault.hashicorp.com/agent-inject-secret-db-username: "database/creds/db-app:/vault/secrets/db-creds"
