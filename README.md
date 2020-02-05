@@ -1,5 +1,9 @@
 # Vault Agent Injector Example
 
+This demo requires `Helm V2`.
+
+## Demo
+
 Run the setup script that installs:
 
 * Vault
