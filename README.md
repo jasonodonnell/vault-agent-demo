@@ -24,6 +24,22 @@ Run the setup script that installs:
 ./setup.sh
 ```
 
+Vault will automatically init, unseal, load auth methods, load policies and setup roles.
+
+To get the root token or unseal keys for Vault, look in the `/tmp` directory in the `vault-0` pod.
+
+## Namespaces
+
+The demo is running in three different namespaces: `vault`, `postgres` and `app`.
+
+```
+kubectl get pods -n vault
+kubectl get pods -n postgres
+
+# App won't have pods running into the examples are started
+kubectl get pods -n app
+```
+
 ## App
 
 Run the app demo:
