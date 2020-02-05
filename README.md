@@ -2,6 +2,16 @@
 
 This demo requires `Helm V2`.
 
+Additionally make sure Helm is installed with RBAC:
+
+```bash
+kubectl -n kube-system create serviceaccount tiller
+kubectl create clusterrolebinding tiller \
+  --clusterrole cluster-admin \
+  --serviceaccount=kube-system:tiller
+helm init --service-account tiller
+```
+
 ## Demo
 
 Run the setup script that installs:
