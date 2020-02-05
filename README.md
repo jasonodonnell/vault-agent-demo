@@ -26,7 +26,7 @@ Run the setup script that installs:
 ./setup.sh
 ```
 
-Vault will automatically init, unseal, load auth methods, load policies and setup roles.
+Vault will automatically [init, unseal, load auth methods, load policies and setup roles](https://github.com/jasonodonnell/vault-agent-demo/blob/master/configs/bootstrap.sh).
 
 To get the root token or unseal keys for Vault, look in the `/tmp` directory in the `vault-0` pod.
 
