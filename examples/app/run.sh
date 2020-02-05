@@ -22,13 +22,6 @@ spec:
       serviceAccountName: app
       containers:
       - name: app
-        image: jodonnellhashi/vault-k8s-demo-app:0.1.0
+        image: jodonnellhashi/vault-k8s-demo-app:0.2.0
         imagePullPolicy: Always
-        env:
-        - name: PG_SCHEMA
-          value: "app"
-        - name: APP_DB_PATH
-          value: "/vault/secrets/db-creds"
-        - name: APP_TLS_PATH
-          value: "/vault/secrets"
 EOF
