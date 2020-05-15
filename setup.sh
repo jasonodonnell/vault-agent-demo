@@ -10,8 +10,8 @@ kubectl create namespace vault
 kubectl create namespace postgres
 kubectl create namespace app
 
-helm delete --purge tls-test
-helm install --name=tls-test --namespace=${NAMESPACE?} ${DIR?}/tls
+helm delete tls-test
+helm install tls-test --namespace=${NAMESPACE?} ${DIR?}/tls
 
 kubectl get secret tls-test-client --namespace=${NAMESPACE?} --export -o yaml |\
   kubectl apply --namespace=app -f -
@@ -26,7 +26,8 @@ kubectl label secret demo-vault app=vault-agent-demo \
     --namespace=${NAMESPACE?}
 
 ${DIR?}/postgres/run.sh
+${DIR?}/daemonset/run.sh
 
-helm install --name=vault \
+helm install vault \
   --namespace="${NAMESPACE?}" \
   -f ${DIR?}/values.yaml ${DIR?}/vault-helm

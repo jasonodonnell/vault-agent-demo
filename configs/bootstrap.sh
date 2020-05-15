@@ -1,7 +1,7 @@
 #!/bin/sh
 
 OUTPUT=/tmp/output.txt
-export VAULT_ADDR=https://127.0.0.1:8200
+export VAULT_ADDR=http://127.0.0.1:8200
 export VAULT_SKIP_VERIFY=true
 
 vault operator init -n 1 -t 1 >> ${OUTPUT?}
@@ -27,8 +27,8 @@ vault write auth/kubernetes/role/db-app \
     bound_service_account_names=app \
     bound_service_account_namespaces=app \
     policies=app \
-    token_max_ttl=60s \
-    ttl=30s
+    token_max_ttl=3m \
+    ttl=2m
 
 vault write auth/kubernetes/role/db-backup \
     bound_service_account_names=pgdump \
@@ -75,8 +75,8 @@ vault secrets tune -max-lease-ttl=8760h pki
 vault write pki/root/generate/internal common_name=hashicorp.com ttl=8760h
 
 vault write pki/config/urls \
-    issuing_certificates="https://vault.vault.svc:8200/v1/pki/ca" \
-    crl_distribution_points="https://vault.vault.svc:8200/v1/pki/crl"
+    issuing_certificates="http://vault.vault.svc:8200/v1/pki/ca" \
+    crl_distribution_points="http://vault.vault.svc:8200/v1/pki/crl"
 
 vault write pki/roles/hashicorp-com \
     allowed_domains=hashicorp.com \

@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-agent-config
+  namespace: vault
+  labels:
+    app: vault-agent
+data:
+  config.hcl: |
+    "pid_file" = "/home/vault/.pid"
+    "cache" = {}
+
+    "listener" = {
+      "address" = "[::]:8200"
+      "tls_disable" = 1
+     "type" = "tcp"
+    }
+
+    "vault" = {
+      "address" = "http://vault.vault.svc:8200"
+    }
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vault-agent
+  namespace: vault
+  labels:
+    app: vault-agent
+spec:
+  selector:
+    matchLabels:
+      name: vault-agent
+  template:
+    metadata:
+      labels:
+        name: vault-agent
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 100
+      containers:
+      - name: vault-agent
+        image: vault:1.4.1
+        args:
+        - vault agent -config=/vault/config/config.hcl
+        command:
+        - /bin/sh
+        - -ec
+        volumeMounts:
+        - name: vault-agent-config
+          mountPath: /vault/config
+        ports:
+        - containerPort: 8200
+          hostPort: 8200
+      volumes:
+      - name: vault-agent-config
+        configMap:
+          name: vault-agent-config

@@ -1,0 +1,88 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: vault-agent-demo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: vault-agent-demo
+    spec:
+      serviceAccountName: app
+      initContainers:
+      - name: vault-agent-init
+        image: vault:1.4.1
+        command:
+        - /bin/sh
+        - -ec
+        args:
+        - vault agent -config=/vault/config/config-init.json
+        env:
+        - name: VAULT_LOG_LEVEL
+          value: "debug"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: VAULT_ADDR
+          value: http://$(HOST_IP):8200
+        securityContext:
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 100
+        volumeMounts:
+        - mountPath: /vault/secrets
+          name: vault-secrets
+        - mountPath: /vault/config
+          name: vault-configs
+      containers:
+      - name: app
+        image: jodonnellhashi/vault-k8s-demo-app:0.1.0
+        imagePullPolicy: Always
+        env:
+        - name: PG_SCHEMA
+          value: "app"
+        - name: APP_DB_PATH
+          value: "/vault/secrets/db-creds"
+        - name: APP_TLS_PATH
+          value: "/vault/secrets"
+      - name: vault-agent
+        image: vault:1.4.1
+        imagePullPolicy: Always
+        env:
+          value: "/vault/secrets"
+        command:
+        - /bin/sh
+        - -ec
+        args:
+        - vault agent -config=/vault/config/config.json
+        env:
+        - name: VAULT_LOG_LEVEL
+          value: "debug"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: VAULT_ADDR
+          value: http://$(HOST_IP):8200
+        securityContext:
+         runAsGroup: 1000
+         runAsNonRoot: true
+         runAsUser: 100
+        volumeMounts:
+        - mountPath: /vault/secrets
+          name: vault-secrets
+        - mountPath: /vault/config
+          name: vault-configs
+      volumes:
+      - name: vault-secrets
+        emptyDir:
+          medium: Memory
+      - name: vault-configs
+        configMap:
+          name: vault-agent-config

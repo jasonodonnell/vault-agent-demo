@@ -1,20 +1,16 @@
 global:
-  tlsDisable: false
+  tlsDisable: true
 
 injector:
-  image:
-    tag: "0.2.0"
+  enabled: false
 
 server:
+  image:
+    repository: "vault"
+    tag: "1.4.1"
   extraVolumes:
   - type: secret
     name: demo-vault
-  - type: secret
-    name: tls-test-server
-  - type: secret
-    name: tls-test-client
-  extraEnvironmentVar:
-    VAULT_CACERT=/vault/userconfig/tls-test-server/ca.crt
   standalone:
     enabled: true
     config: |
@@ -23,9 +19,7 @@ server:
       listener "tcp" {
         address = "[::]:8200"
         cluster_address = "[::]:8201"
-        tls_cert_file = "/vault/userconfig/tls-test-server/server.crt"
-        tls_key_file = "/vault/userconfig/tls-test-server/server.key"
-        tls_client_ca_file = "/vault/userconfig/tls-test-server/ca.crt"
+        tls_disable = 1
       }
       storage "file" {
         path = "/vault/data"

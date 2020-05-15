@@ -39,6 +39,8 @@ spec:
               value: ":8080"
             - name: AGENT_INJECT_LOG_LEVEL
               value: {{ .Values.injector.logLevel | default "info" }}
+            - name: AGENT_INJECT_LOG_FORMAT
+              value: "json"
             - name: AGENT_INJECT_VAULT_ADDR
               value: {{ include "vault.scheme" . }}://{{ template "vault.fullname" . }}.{{ .Release.Namespace }}.svc:{{ .Values.server.service.port }}
             - name: AGENT_INJECT_VAULT_IMAGE
