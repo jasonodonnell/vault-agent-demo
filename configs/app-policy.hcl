@@ -1,7 +1,15 @@
+path "secret/hashiconf" {
+  capabilities = ["read"]
+}
+
 path "database/creds/db-app" {
   capabilities = ["read"]
 }
 
-path "pki/issue/hashicorp-com" {
+path "transit/encrypt/app" {
+  capabilities = ["create", "read", "update"] 
+}
+
+path "transit/decrypt/app" {
   capabilities = ["create", "read", "update"] 
 }
