@@ -6,7 +6,7 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-inject-status: "update"
         vault.hashicorp.com/agent-cache-enable: "true"
-        vault.hashicorp.com/agent-cache-use-auth-auth-token: "force"
+        vault.hashicorp.com/agent-cache-use-auto-auth-token: "force"
         vault.hashicorp.com/agent-run-as-same-user: "true"
         # DATABASE SECRET
         vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/db-app"

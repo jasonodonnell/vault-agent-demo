@@ -3,7 +3,7 @@ global:
 
 injector:
   image:
-    repository: "gcr.io/vault-helm-dev-246514/hashicorp/vault-k8s"
+    repository: "jodonnellhashi/vault-k8s"
     tag: "hashiconf"
 
 server:
