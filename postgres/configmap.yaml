@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-init
+  labels:
+    app: postgres
+data:
+  setup.sql: |
+    CREATE ROLE vault;
+    ALTER ROLE vault WITH SUPERUSER LOGIN PASSWORD 'vault';
+    \c wizard
+    CREATE SCHEMA app;
+    CREATE TABLE app.coffee(
+      name TEXT PRIMARY KEY,
+      species TEXT,
+      regions TEXT,
+      comment TEXT
+    );
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Arusha','C. arabica','Tanzania, Papua New Guine','Either a Typica variety or a French Mission.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Bourbon','C. arabica','Rwanda, Latin America','Around 1708 the French planted coffee on the island of Bourbon in the middle of the Indian Ocean, all probably from the same parent stock.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Catuai','C. arabica','Latin America','This is a hybrid of Mundo Novo and Caturra bred in Brazil in the late 1940s.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Colombian','C. arabica','Colombia','When Colombian coffee is freshly roasted it has a bright acidity, is heavy in body and is intensely aromatic.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Ethiopian Harar','C. arabica','Ethiopia','Known for its complex, fruity flavor that resembles a dry red wine.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Ethiopian Yirgacheffe','C. arabica','Ethiopia','From the Yirgachefe district in the Gedeo Zone of the Southern Nations, Nationalities, and Peoples Region of Ethiopia.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Geisha','C. arabica','Ethiopia, Tanzania, Costa Rica, Panama, Colombia, Peru','The most expensive varietal at coffee auctions, fetching $350.25USD in 2013.[24]');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Hawaiian Kona','C. arabica','Hawaii','Grown on the slopes of Hualalai and Mauna Loa in the Kona District on the Big Island of Hawaii.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Java','Interspecific hybrid','Indonesia','This coffee was once so widely traded that java became a slang term for coffee.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Maragogipe','C. arabica','Latin America','Maragogipe is considered to be a natural mutation from Typica');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Santos','C. arabica','Brazil','The name refers to the port in Brazil where coffee passed through, and was regarded as higher quality than Brazilian coffee.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Sulawesi','C. arabica','Indonesia','Sulawesi exhibits a rich, full body, well-balanced acidity and is multi-dimensional in character.');
+    INSERT INTO app.coffee(name, species, regions, comment) VALUES ('Sumatra Mandheling','C. arabica','Indonesia','Mandheling is named after the Mandailing people located in North Sumatra, Indonesia.');
+    CREATE TABLE app.users(
+      username TEXT PRIMARY KEY,
+      password TEXT
+    );
+    INSERT INTO app.users(username, password) VALUES ('alice', 'pFnLK*Xe4c:jYyU');
+    INSERT INTO app.users(username, password) VALUES ('bob', 'v9~CRa-$q%P~87!5');
+    INSERT INTO app.users(username, password) VALUES ('joe', 'VfU{Y3\^XuM]8#^-');
+    INSERT INTO app.users(username, password) VALUES ('sue', 't=6h%+cK?)k[KC9M');

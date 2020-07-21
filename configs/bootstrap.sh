@@ -13,9 +13,10 @@ vault operator unseal ${unseal?}
 
 vault login -no-print ${root?}
 
+# Add 'app' policy for each demo
 vault policy write app /vault/userconfig/demo-vault/app-policy.hcl
-vault policy write db-backup /vault/userconfig/demo-vault/pgdump-policy.hcl
 
+# Setup Kube Auth Method
 vault auth enable kubernetes
 
 vault write auth/kubernetes/config \
@@ -23,24 +24,23 @@ vault write auth/kubernetes/config \
    kubernetes_host=https://${KUBERNETES_PORT_443_TCP_ADDR}:443 \
    kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
-vault write auth/kubernetes/role/db-app \
+vault write auth/kubernetes/role/app \
     bound_service_account_names=app \
     bound_service_account_namespaces=app \
     policies=app \
-    token_max_ttl=60s \
-    ttl=30s
+    token_max_ttl=15s \
+    ttl=5s
 
-vault write auth/kubernetes/role/db-backup \
-    bound_service_account_names=pgdump \
-    bound_service_account_namespaces=app \
-    policies=db-backup \
-    ttl=1h
+# Demo 1: Static Secrets
+vault secrets enable -path=secret/ kv
+vault kv put secret/hashiconf hashiconf=rocks
 
+# Demo 2: Dynamic Secrets
 vault secrets enable database
 
 vault write database/config/postgresql \
     plugin_name=postgresql-database-plugin \
-    allowed_roles="db-app,db-backup" \
+    allowed_roles="db-app" \
     connection_url="postgresql://{{username}}:{{password}}@postgres.postgres.svc.cluster.local:5432/wizard?sslmode=disable" \
     username="vault" \
     password="vault"
@@ -53,32 +53,9 @@ vault write database/roles/db-app \
         GRANT CREATE ON SCHEMA app TO \"{{name}}\"; \
         GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA app TO \"{{name}}\";" \
     revocation_statements="ALTER ROLE \"{{name}}\" NOLOGIN;"\
-    default_ttl="1h" \
-    max_ttl="24h"
+    default_ttl="10s" \
+    max_ttl="1h"
 
-vault write database/roles/db-backup \
-    db_name=postgresql \
-    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
-        GRANT CONNECT ON DATABASE wizard TO \"{{name}}\"; \
-        GRANT USAGE ON SCHEMA app TO \"{{name}}\"; \
-        GRANT USAGE ON SCHEMA public TO \"{{name}}\"; \
-        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\"; \
-        GRANT SELECT ON ALL TABLES IN SCHEMA app TO \"{{name}}\";" \
-    revocation_statements="ALTER ROLE \"{{name}}\" NOLOGIN;"\
-    default_ttl="1h" \
-    max_ttl="24h"
-
-vault secrets enable pki
-
-vault secrets tune -max-lease-ttl=8760h pki
-
-vault write pki/root/generate/internal common_name=hashicorp.com ttl=8760h
-
-vault write pki/config/urls \
-    issuing_certificates="https://vault.vault.svc:8200/v1/pki/ca" \
-    crl_distribution_points="https://vault.vault.svc:8200/v1/pki/crl"
-
-vault write pki/roles/hashicorp-com \
-    allowed_domains=hashicorp.com \
-    allow_subdomains=true \
-    max_ttl=72h
+# Demo 3: Transit
+vault secrets enable transit
+vault write -f transit/keys/app
