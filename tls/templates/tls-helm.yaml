@@ -6,8 +6,12 @@
 {{ $dns1:= $cn }}
 {{ $dns2 := printf "%s.%s" .Values.tls.server.name .Release.Namespace }}
 {{ $dns3 := printf "%s.%s.svc" .Values.tls.server.name .Release.Namespace }}
-{{ $server := genSignedCert $cn (list "127.0.0.1") (list $dns1 $dns2 $dns3) ( .Values.tls.server.valid | int ) $ca }}
-{{ $client := genSignedCert "" nil (list $dns1 $dns2 $dns3 ) ( .Values.tls.client.valid | int ) $ca }}
+{{ $dns4 := printf "*.%s-internal" .Values.tls.server.name }}
+{{ $dns5 := printf "*.%s-internal.%s" .Values.tls.server.name .Release.Namespace }}
+{{ $dns6 := printf "*.%s-internal.%s.svc" .Values.tls.server.name .Release.Namespace }}
+{{ $dns7 := printf "%s-active.%s.svc" .Values.tls.server.name .Release.Namespace }}
+{{ $dns8 := printf "%s-standby.%s.svc" .Values.tls.server.name .Release.Namespace }}
+{{ $server := genSignedCert $cn (list "127.0.0.1") (list $dns1 $dns2 $dns3 $dns4 $dns6 $dns6 $dns7 $dns8) ( .Values.tls.server.valid | int ) $ca }}
 ---
 apiVersion: v1
 kind: Secret
@@ -26,13 +30,11 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ template "tls-test.fullname" . }}-client
+  name: {{ template "tls-test.fullname" . }}-ca
   labels:
-    app: {{ template "tls-test.name" . }}-client
+    app: {{ template "tls-test.name" . }}-ca
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
 data:
   ca.crt: {{ b64enc $ca.Cert }}
-  client.crt: {{ b64enc $client.Cert }}
-  client.key: {{ b64enc $client.Key }}

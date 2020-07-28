@@ -3,39 +3,50 @@ global:
 
 injector:
   image:
-    repository: "jodonnellhashi/vault-k8s"
-    tag: "hashiconf"
-
+    repository: "hashicorp/vault-k8s"
+    tag: "0.4.0"
+  agentImage:
+    repository: "vault"
+    tag: "1.5.0"
+   
 server:
+  image:
+    repository: "vault"
+    tag: "1.5.0"
+
   extraVolumes:
-  - type: secret
-    name: demo-vault
   - type: secret
     name: tls-test-server
   - type: secret
-    name: tls-test-client
+    name: kms-creds
 
-  extraEnvironmentVar:
-    VAULT_CACERT=/vault/userconfig/tls-test-server/ca.crt
+  extraEnvironmentVars:
+    VAULT_CACERT: "/vault/userconfig/tls-test-server/ca.crt"
+    GOOGLE_REGION: "global"
+    GOOGLE_PROJECT: "vault-helm-dev-246514"
+    GOOGLE_APPLICATION_CREDENTIALS: "/vault/userconfig/kms-creds/credentials.json"
 
-  standalone:
+  ha:
     enabled: true
-    config: |
-      listener "tcp" {
-        address = "[::]:8200"
-        cluster_address = "[::]:8201"
-        tls_cert_file = "/vault/userconfig/tls-test-server/server.crt"
-        tls_key_file = "/vault/userconfig/tls-test-server/server.key"
-      }
+    raft:
+      enabled: true
+      config: |
+        listener "tcp" {
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_cert_file = "/vault/userconfig/tls-test-server/server.crt"
+          tls_key_file = "/vault/userconfig/tls-test-server/server.key"
+        }
 
-      storage "file" {
-        path = "/vault/data"
-      }
+        storage "raft" {
+          path = "/vault/data"
+        }
 
-  readinessProbe:
-    path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
+        service_registration "kubernetes" {}
 
-  postStart:
-  - "/bin/sh"
-  - "-c"
-  - "sleep 5 && cp /vault/userconfig/demo-vault/bootstrap.sh /tmp/bootstrap.sh && chmod +x /tmp/bootstrap.sh && /tmp/bootstrap.sh"
+        seal "gcpckms" {
+          project     = "vault-helm-dev-246514"
+          region      = "global"
+          key_ring    = "vault-helm-unseal-kr"
+          crypto_key  = "vault-helm-unseal-key"
+        }

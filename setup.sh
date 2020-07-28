@@ -10,23 +10,20 @@ helm repo add hashicorp https://helm.releases.hashicorp.com
 helm repo update
 
 kubectl create namespace vault
-kubectl create namespace postgres
-kubectl create namespace app
 
 helm install tls-test --namespace=${NAMESPACE?} ${DIR?}/tls
 
-kubectl get secret tls-test-client --namespace=${NAMESPACE?} --export -o yaml |\
+kubectl get secret tls-test-ca --namespace=${NAMESPACE?} --export -o yaml |\
   kubectl apply --namespace=app -f -
 
-kubectl create secret generic demo-vault \
-    --from-file ${DIR?}/configs/app-policy.hcl \
-    --from-file ${DIR?}/configs/bootstrap.sh \
-    --namespace=${NAMESPACE?}
+if [[ ! -f ${HOME?}/credentials.json ]]
+then
+	echo "ERROR: ${HOME?}/credentials.json not found.  This is required to configure KMS auto-unseal."
+    exit 1
+fi
 
-kubectl label secret demo-vault app=vault-agent-demo \
-    --namespace=${NAMESPACE?}
-
-${DIR?}/postgres/run.sh
+kubectl create secret generic -n vault kms-creds \
+  --from-file=${HOME?}/credentials.json
 
 helm install vault \
   --namespace="${NAMESPACE?}" \
