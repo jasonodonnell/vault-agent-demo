@@ -1,4 +1,4 @@
-# Vault Agent Injector Example
+# Vault Helm Raft TLS Example
 
 This demo requires `Helm V3`.
 
