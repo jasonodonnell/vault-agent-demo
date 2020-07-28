@@ -2,7 +2,6 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 NAMESPACE='vault'
-export CA_BUNDLE=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
 
 ${DIR?}/cleanup.sh
 
@@ -18,7 +17,7 @@ kubectl get secret tls-test-ca --namespace=${NAMESPACE?} --export -o yaml |\
 
 if [[ ! -f ${HOME?}/credentials.json ]]
 then
-	echo "ERROR: ${HOME?}/credentials.json not found.  This is required to configure KMS auto-unseal."
+    echo "ERROR: ${HOME?}/credentials.json not found.  This is required to configure KMS auto-unseal."
     exit 1
 fi
 
