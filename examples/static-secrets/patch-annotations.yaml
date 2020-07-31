@@ -8,6 +8,15 @@ spec:
         vault.hashicorp.com/agent-inject-secret-kv-secret: "secret/hashiconf"
         vault.hashicorp.com/agent-inject-template-kv-secret: |
           {{ with secret "secret/hashiconf" }}{{ .Data | toJSONPretty }}{{ end }}
+        vault.hashicorp.com/agent-inject-secret-all: "secret/test"
+        vault.hashicorp.com/agent-inject-template-all: |
+          {{ range secrets "secret/test" }}
+            {{ with secret (printf "secret/test/%s" .) }}
+              {{ range $k, $v := .Data }}
+                {{ $k }}: {{ $v }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
         # VAULT SETTINGS
         vault.hashicorp.com/role: "app"
         vault.hashicorp.com/tls-secret: "tls-test-client"

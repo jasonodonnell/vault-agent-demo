@@ -34,6 +34,8 @@ vault write auth/kubernetes/role/app \
 # Demo 1: Static Secrets
 vault secrets enable -path=secret/ kv
 vault kv put secret/hashiconf hashiconf=rocks
+vault kv put secret/test/foo name=jason team=vault
+vault kv put secret/test/bar name=nararyan team=product
 
 # Demo 2: Dynamic Secrets
 vault secrets enable database
