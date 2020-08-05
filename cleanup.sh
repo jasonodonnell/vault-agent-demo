@@ -16,7 +16,7 @@ kubectl delete clusterrolebinding vault-agent-injector-binding vault-server-bind
 
 helm delete vault
 helm delete tls-test
-kubectl delete pvc --all
+kubectl delete pvc -n vault
 kubectl delete namespace vault postgres app
 
 ${DIR?}/postgres/cleanup.sh
