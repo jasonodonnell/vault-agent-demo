@@ -2,9 +2,11 @@ global:
   tlsDisable: false
 
 injector:
-  image:
-    repository: "jodonnellhashi/vault-k8s"
-    tag: "hashiconf"
+  # caBundle is set via install flag in main setup script
+  certs:
+    secretName: injector-tls
+    certName: server.crt
+    keyName: server.key
 
 server:
   extraVolumes:

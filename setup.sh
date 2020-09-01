@@ -1,8 +1,8 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-NAMESPACE='vault'
-export CA_BUNDLE=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
+export NAMESPACE='vault'
+export TLS_DIR='/tmp/injector-tls'
 
 ${DIR?}/cleanup.sh
 
@@ -28,6 +28,13 @@ kubectl label secret demo-vault app=vault-agent-demo \
 
 ${DIR?}/postgres/run.sh
 
+${DIR?}/injector-tls.sh
+
+export CA_BUNDLE=$(cat ${TLS_DIR?}/injector-ca.crt | base64)
+
 helm install vault \
   --namespace="${NAMESPACE?}" \
-  -f ${DIR?}/values.yaml hashicorp/vault --version=0.6.0
+  --set "injector.certs.caBundle=${CA_BUNDLE?}" \
+  -f ${DIR?}/values.yaml hashicorp/vault --version=0.7.0
+
+kubectl scale deployment/vault-agent-injector --replicas=3 -n vault
