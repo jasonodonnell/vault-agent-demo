@@ -28,8 +28,8 @@ vault write auth/kubernetes/role/app \
     bound_service_account_names=app \
     bound_service_account_namespaces=app \
     policies=app \
-    token_max_ttl=15s \
-    ttl=5s
+    token_max_ttl=20m \
+    ttl=10m
 
 # Demo 1: Static Secrets
 vault secrets enable -path=secret/ kv
@@ -53,7 +53,7 @@ vault write database/roles/db-app \
         GRANT CREATE ON SCHEMA app TO \"{{name}}\"; \
         GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA app TO \"{{name}}\";" \
     revocation_statements="ALTER ROLE \"{{name}}\" NOLOGIN;"\
-    default_ttl="10s" \
+    default_ttl="1m" \
     max_ttl="1h"
 
 # Demo 3: Transit

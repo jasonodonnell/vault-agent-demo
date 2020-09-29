@@ -1,11 +1,6 @@
 global:
   tlsDisable: false
 
-injector:
-  image:
-    repository: "jodonnellhashi/vault-k8s"
-    tag: "hashiconf"
-
 server:
   extraVolumes:
   - type: secret
