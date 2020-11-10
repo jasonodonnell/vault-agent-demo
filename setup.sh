@@ -27,6 +27,7 @@ kubectl label secret demo-vault app=vault-agent-demo \
     --namespace=${NAMESPACE?}
 
 ${DIR?}/postgres/run.sh
+${DIR?}/daemonset/run.sh
 
 helm install vault \
   --namespace="${NAMESPACE?}" \

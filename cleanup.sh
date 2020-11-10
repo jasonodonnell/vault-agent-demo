@@ -11,8 +11,10 @@ kubectl delete ${OBJECTS?} --selector=app=vault-agent-demo --namespace=vault
 kubectl delete ${OBJECTS?} --selector=app=vault-agent-demo --namespace=app
 kubectl delete ${OBJECTS?} --selector=app=vault-agent-demo --namespace=postgres
 kubectl delete mutatingwebhookconfigurations vault-agent-injector-cfg
-kubectl delete clusterrole vault-agent-injector-clusterrole 
+kubectl delete clusterrole vault-agent-injector-clusterrole
 kubectl delete clusterrolebinding vault-agent-injector-binding vault-server-binding
+
+${DIR?}/daemonset/cleanup.sh
 
 helm delete vault
 helm delete tls-test
