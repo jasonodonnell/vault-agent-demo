@@ -36,6 +36,8 @@ kubectl get pods -n app
 
 ## Waypoint Demo
 
+**Note**: In the `waypoint.hcl` file, you need to edit the `image` value to point to your Docker registry. In my example my Docker registry is GCR.
+
 ```bash
 cd ./examples/waypoint
 waypoint init
