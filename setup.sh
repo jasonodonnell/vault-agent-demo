@@ -15,7 +15,8 @@ kubectl create namespace app
 
 helm install tls-test --namespace=${NAMESPACE?} ${DIR?}/tls
 
-kubectl get secret tls-test-client --namespace=${NAMESPACE?} --export -o yaml |\
+kubectl get secret tls-test-client --namespace=vault -o json | \
+  jq 'del(.metadata.namespace,.metadata.resourceVersion,.metadata.uid) | .metadata.creationTimestamp=null' | \
   kubectl apply --namespace=app -f -
 
 kubectl create secret generic demo-vault \
@@ -30,4 +31,4 @@ ${DIR?}/postgres/run.sh
 
 helm install vault \
   --namespace="${NAMESPACE?}" \
-  -f ${DIR?}/values.yaml hashicorp/vault --version=0.7.0
+  -f ${DIR?}/values.yaml hashicorp/vault --version=0.8.0

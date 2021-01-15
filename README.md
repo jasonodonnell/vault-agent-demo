@@ -1,6 +1,6 @@
 # Vault Agent Injector Example
 
-This demo requires `Helm V3`.
+This demo requires `Helm V3` and `jq` to be installed.
 
 ## Demo
 
