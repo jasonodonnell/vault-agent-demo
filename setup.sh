@@ -31,4 +31,4 @@ ${DIR?}/postgres/run.sh
 
 helm install vault \
   --namespace="${NAMESPACE?}" \
-  -f ${DIR?}/values.yaml hashicorp/vault --version=0.8.0
+  -f ${DIR?}/values.yaml hashicorp/vault --version=0.9.0
