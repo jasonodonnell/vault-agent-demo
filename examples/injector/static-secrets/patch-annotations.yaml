@@ -1,0 +1,14 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        # AGENT INJECTOR SETTINGS
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/agent-inject-secret-kv-secret: "secret/hashiconf"
+        vault.hashicorp.com/agent-inject-template-kv-secret: |
+          {{ with secret "secret/hashiconf" }}{{ .Data | toJSONPretty }}{{ end }}
+        # VAULT SETTINGS
+        vault.hashicorp.com/role: "app"
+        vault.hashicorp.com/tls-secret: "tls-test-client"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
