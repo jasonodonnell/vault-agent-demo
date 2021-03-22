@@ -1,7 +1,19 @@
 global:
   tlsDisable: false
 
+injector:
+  image:
+    tag: 0.9.0
+    repository: hashicorp/vault-k8s
+  agentImage:
+    tag: 1.7.0-rc1
+    repository: hashicorp/vault
+
 server:
+  image:
+    tag: 1.7.0-rc1
+    repository: hashicorp/vault
+
   extraVolumes:
   - type: secret
     name: demo-vault
@@ -29,6 +41,8 @@ server:
 
   readinessProbe:
     path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
+
+
 
   postStart:
   - "/bin/sh"

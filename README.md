@@ -31,43 +31,6 @@ kubectl get pods -n postgres
 kubectl get pods -n app
 ```
 
-## Static Secret Demo:
-
-```bash
-cd ./examples/static-secrets
-./run.sh
-```
-
-Observe no secrets/sidecars on the app pod:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Patch the app:
-
-```bash
-./patch.sh
-```
-
-Observe the secrets at:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Port forward and open the webpage:
-
-```bash
-kubectl port-forward <name of app pod> -n app 8080:8080
-
-open http://127.0.0.1:8080
-```
-
 ## Dynamic Secret Demo:
 
 ```bash
@@ -81,35 +44,6 @@ Observe no secrets/sidecars on the app pod:
 kubectl describe pod <name of pod> -n app
 
 kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Patch the app:
-
-```bash
-./patch.sh
-```
-
-Observe the secrets at:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Port forward and open the webpage:
-
-```bash
-kubectl port-forward <name of app pod> -n app 8080:8080
-
-open http://127.0.0.1:8080
-```
-
-## Transit Demo:
-
-```bash
-cd ./examples/transit
-./run.sh
 ```
 
 Patch the app:
