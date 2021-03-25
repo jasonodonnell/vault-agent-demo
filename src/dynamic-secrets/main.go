@@ -15,11 +15,15 @@ import (
 )
 
 type App struct {
-	Listen         string
-	DatabasePath   string
-	DatabaseSecret string
-	TLSPath        string
-	Logger         hclog.Logger
+	Listen          string
+	DatabasePath    string
+	DatabaseSecret  string
+	TLSPath         string
+	Logger          hclog.Logger
+	CSI             bool
+	CSIUsernamePath string
+	CSIPasswordPath string
+	CSIPGService    string
 }
 
 var db *pg.DB
@@ -51,9 +55,9 @@ func main() {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var results struct {
 			Connected bool
-			Coffee []pg.Coffee
-			Username pg.Username
-			Version pg.Version
+			Coffee    []pg.Coffee
+			Username  pg.Username
+			Version   pg.Version
 		}
 
 		results.Coffee, err = db.AllCoffee()
@@ -97,7 +101,7 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP)
 
-	go func(){
+	go func() {
 		for range c {
 			app.Logger.Info("SIGHUP received. Reloading configuration..")
 			db, err = app.newDBConnection()
@@ -124,17 +128,46 @@ func fileExists(filename string) bool {
 }
 
 func (a *App) newDBConnection() (*pg.DB, error) {
-	for !fileExists(a.DatabasePath) {
-		a.Logger.Error("error reading database secret: file does not exist", "file", a.DatabasePath)
-		time.Sleep(1 * time.Second)
-	}
+	if a.CSI {
+		for !fileExists(a.CSIUsernamePath) {
+			a.Logger.Error("error reading database secret: file does not exist", "file", a.CSIUsernamePath)
+			time.Sleep(1 * time.Second)
+		}
 
-	dbSecret, err := ioutil.ReadFile(a.DatabasePath)
-	if err != nil {
-		a.Logger.Error("error reading database secret", "error", err)
-		return nil, err
-	}
+		dbUsername, err := ioutil.ReadFile(a.CSIUsernamePath)
+		if err != nil {
+			a.Logger.Error("error reading database secret", "error", err)
+			return nil, err
+		}
 
-	a.DatabaseSecret = strings.Replace(strings.TrimSpace(string(dbSecret)), "\n", "", -1)
+		for !fileExists(a.CSIPasswordPath) {
+			a.Logger.Error("error reading database secret: file does not exist", "file", a.CSIPasswordPath)
+			time.Sleep(1 * time.Second)
+		}
+
+		dbPassword, err := ioutil.ReadFile(a.CSIPasswordPath)
+		if err != nil {
+			a.Logger.Error("error reading database secret", "error", err)
+			return nil, err
+		}
+
+		service := a.CSIPGService
+		service = strings.Replace(service, "USERNAME", string(dbUsername), -1)
+		service = strings.Replace(service, "PASSWORD", string(dbPassword), -1)
+		a.DatabaseSecret = strings.Replace(strings.TrimSpace(string(service)), "\n", "", -1)
+	} else {
+		for !fileExists(a.DatabasePath) {
+			a.Logger.Error("error reading database secret: file does not exist", "file", a.DatabasePath)
+			time.Sleep(1 * time.Second)
+		}
+
+		dbSecret, err := ioutil.ReadFile(a.DatabasePath)
+		if err != nil {
+			a.Logger.Error("error reading database secret", "error", err)
+			return nil, err
+		}
+
+		a.DatabaseSecret = strings.Replace(strings.TrimSpace(string(dbSecret)), "\n", "", -1)
+	}
 	return pg.NewDB(a.DatabaseSecret)
 }

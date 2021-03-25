@@ -34,3 +34,16 @@ server:
   - "/bin/sh"
   - "-c"
   - "sleep 5 && cp /vault/userconfig/demo-vault/bootstrap.sh /tmp/bootstrap.sh && chmod +x /tmp/bootstrap.sh && /tmp/bootstrap.sh"
+
+csi:
+  enabled: true
+
+  volumes:
+  - name: tls
+    secret:
+      secretName: tls-test-client
+
+  volumeMounts:
+   - name: tls
+     mountPath: "/vault/tls"
+     readOnly: true
