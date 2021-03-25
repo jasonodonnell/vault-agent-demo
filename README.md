@@ -8,6 +8,8 @@ Run the setup script that installs:
 
 * Vault
 * Vault Agent Injector
+* CSI Secret Store
+* Vault CSI Provider
 * PostgreSQL (for example)
 
 ```bash
