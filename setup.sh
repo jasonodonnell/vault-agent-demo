@@ -38,4 +38,4 @@ helm install csi-secrets-store https://github.com/kubernetes-sigs/secrets-store-
 
 helm install vault \
   --namespace="${NAMESPACE?}" \
-  -f ${DIR?}/values.yaml ./vault-helm
+  -f ${DIR?}/values.yaml hashicorp/vault

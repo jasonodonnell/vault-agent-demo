@@ -37,10 +37,13 @@ server:
 
 csi:
   enabled: true
-  image:
-    repository: "gcr.io/vault-helm-dev/hashicorp/secrets-store-csi-driver-provider-vault"
-    tag: "0.1.0"
 
-  extraVolumes:
-  - type: secret
-    name: tls-test-client
+  volumes:
+  - name: tls
+    secret:
+      secretName: tls-test-client
+
+  volumeMounts:
+   - name: tls
+     mountPath: "/vault/tls"
+     readOnly: true
