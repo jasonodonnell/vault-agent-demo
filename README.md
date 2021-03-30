@@ -24,7 +24,7 @@ To get the root token or unseal keys for Vault, look in the `/tmp` directory in 
 
 ## Namespaces
 
-The demo is running in three different namespaces: `kube-logging`, `vault`, `postgres` and `app`.
+The demo is running in four different namespaces: `kube-logging`, `vault`, `postgres` and `app`.
 
 ```bash
 kubectl get pods -n kube-logging
