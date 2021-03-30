@@ -58,11 +58,13 @@ You should see the following configuration window:
 
 ![](https://assets.digitalocean.com/articles/kubernetes_efk/kibana_index.png)
 
-You’ll then be brought to the following page:
+To get the container logs we will set the index name to `logstash-*`.
+
+Next, you’ll then be brought to the following page:
 
 ![](https://assets.digitalocean.com/articles/kubernetes_efk/kibana_index_settings.png)
 
-This allows you to configure which field Kibana will use to filter log data by time. In the dropdown, select the @timestamp field, and hit Create index pattern.
+This allows you to configure which field Kibana will use to filter log data by time. In the dropdown, select the `@timestamp` field, and hit Create index pattern.
 
 Now, hit Discover in the left hand navigation menu.
 
