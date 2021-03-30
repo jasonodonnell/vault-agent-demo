@@ -29,6 +29,7 @@ kubectl label secret demo-vault app=vault-agent-demo \
     --namespace=${NAMESPACE?}
 
 ${DIR?}/postgres/run.sh
+${DIR?}/efk/run.sh
 
 helm install csi-secrets-store https://github.com/kubernetes-sigs/secrets-store-csi-driver/blob/master/charts/secrets-store-csi-driver-0.0.19.tgz?raw=true \
   --wait --timeout=5m \

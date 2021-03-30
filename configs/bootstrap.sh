@@ -60,3 +60,5 @@ vault write database/roles/db-app \
 # Demo 3: Transit
 vault secrets enable transit
 vault write -f transit/keys/app
+
+vault audit enable file file_path=stdout
