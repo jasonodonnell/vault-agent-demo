@@ -1,4 +1,4 @@
-# Vault Agent Injector Example
+# Vault + EFK + K8s Centralized Logging Example
 
 This demo requires `Helm V3` and `jq` to be installed.
 
@@ -8,130 +8,69 @@ Run the setup script that installs:
 
 * Vault
 * Vault Agent Injector
-* CSI Secret Store
-* Vault CSI Provider
 * PostgreSQL (for example)
+* Elastic Search
+* Fluentd
+* Kibana
 
 ```bash
 ./setup.sh
 ```
+**Note: this may take several minutes before its ready. Elastic Search and Kibana are very slow to start.**
 
-Vault will automatically [init, unseal, load auth methods, load policies and setup roles](https://github.com/jasonodonnell/vault-agent-demo/blob/hashiconf/configs/bootstrap.sh).
+Vault will automatically [init, unseal, load auth methods, load policies and setup roles](https://github.com/jasonodonnell/vault-agent-demo/blob/efk/configs/bootstrap.sh).
 
 To get the root token or unseal keys for Vault, look in the `/tmp` directory in the `vault-0` pod.
 
 ## Namespaces
 
-The demo is running in three different namespaces: `vault`, `postgres` and `app`.
+The demo is running in three different namespaces: `kube-logging`, `vault`, `postgres` and `app`.
 
 ```bash
+kubectl get pods -n kube-logging
+
 kubectl get pods -n vault
 
 kubectl get pods -n postgres
-
-# App won't have pods running into the examples are started
-kubectl get pods -n app
 ```
 
-## Static Secret Demo:
+## Kibana Example
+
+Assuming everything is running in all pods, port forward to the Kibana pod:
 
 ```bash
-cd ./examples/static-secrets
-./run.sh
+kubectl port-forward -n kube-logging <name of kibana pod> 5601:5601
 ```
 
-Observe no secrets/sidecars on the app pod:
+Next, run the following command to open Kibana in your browser:
 
 ```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
+open 127.0.0.1:5601
 ```
 
-Patch the app:
+**The following instructions were lifted from [Digital Ocean's great blogpost](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-elasticsearch-fluentd-and-kibana-efk-logging-stack-on-kubernetes).**
 
-```bash
-./patch.sh
+Click on Discover in the left-hand navigation menu:
+
+![](https://assets.digitalocean.com/articles/kubernetes_efk/kibana_discover.png)
+
+You should see the following configuration window:
+
+![](https://assets.digitalocean.com/articles/kubernetes_efk/kibana_index.png)
+
+You’ll then be brought to the following page:
+
+![](https://assets.digitalocean.com/articles/kubernetes_efk/kibana_index_settings.png)
+
+This allows you to configure which field Kibana will use to filter log data by time. In the dropdown, select the @timestamp field, and hit Create index pattern.
+
+Now, hit Discover in the left hand navigation menu.
+
+![](https://assets.digitalocean.com/articles/kubernetes_efk/kibana_logs.png)
+
+Next, filter the logs using the following filter:
+```
+kubernetes.pod_name:vault-0
 ```
 
-Observe the secrets at:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Port forward and open the webpage:
-
-```bash
-kubectl port-forward <name of app pod> -n app 8080:8080
-
-open http://127.0.0.1:8080
-```
-
-## Dynamic Secret Demo:
-
-```bash
-cd ./examples/dynamic-secrets
-./run.sh
-```
-
-Observe no secrets/sidecars on the app pod:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Patch the app:
-
-```bash
-./patch.sh
-```
-
-Observe the secrets at:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Port forward and open the webpage:
-
-```bash
-kubectl port-forward <name of app pod> -n app 8080:8080
-
-open http://127.0.0.1:8080
-```
-
-## Transit Demo:
-
-```bash
-cd ./examples/transit
-./run.sh
-```
-
-Patch the app:
-
-```bash
-./patch.sh
-```
-
-Observe the secrets at:
-
-```bash
-kubectl describe pod <name of pod> -n app
-
-kubectl exec -ti <name of app pod> -n app -c app -- ls /vault/secrets
-```
-
-Port forward and open the webpage:
-
-```bash
-kubectl port-forward <name of app pod> -n app 8080:8080
-
-open http://127.0.0.1:8080
-```
+You can click into any of the log entries to see additional metadata like the container name, Kubernetes node, Namespace, and more.
