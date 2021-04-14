@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: vault-agent-demo
+spec:
+  selector:
+    matchLabels:
+      app: vault-agent-demo
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: vault-agent-demo
+    spec:
+      shareProcessNamespace: true
+      serviceAccountName: app
+      containers:
+      - name: app
+        image: jodonnellhashi/dynamic-secrets-app:2.0.0
+        imagePullPolicy: Always
+        securityContext:
+          runAsUser: 100
+          runAsGroup: 1000
+        volumeMounts:
+        - name: "vault-db-creds"
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+        env:
+        - name: PG_SCHEMA
+          value: "app"
+        - name: APP_CSI
+          value: "true"
+        - name: APP_CSI_PG_SERVICE
+          value: "postgres://USERNAME:PASSWORD@postgres.postgres.svc:5432/wizard?sslmode=disable"
+        - name: APP_CSI_USERNAME_PATH
+          value: "/mnt/secrets-store/dbUsername"
+        - name: APP_CSI_PASSWORD_PATH
+          value: "/mnt/secrets-store/dbPassword"
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: vault-db-creds-secret
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: vault-db-creds-secret
+              key: password
+      volumes:
+      - name: vault-db-creds
+        csi:
+          driver: "secrets-store.csi.k8s.io"
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "vault-db-creds"
