@@ -13,6 +13,10 @@ server:
   extraEnvironmentVar:
     VAULT_CACERT=/vault/userconfig/tls-test-server/ca.crt
 
+  image:
+    repository: hashicorp/vault-enterprise
+    tag: 1.7.0_ent
+
   standalone:
     enabled: true
     config: |
