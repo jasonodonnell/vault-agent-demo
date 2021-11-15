@@ -10,12 +10,13 @@ server:
   - type: secret
     name: tls-test-client
 
-  extraEnvironmentVar:
-    VAULT_CACERT=/vault/userconfig/tls-test-server/ca.crt
+  extraEnvironmentVars:
+      VAULT_CACERT: /vault/userconfig/tls-test-server/ca.crt
+      VAULT_LICENSE: ''
 
   image:
     repository: hashicorp/vault-enterprise
-    tag: 1.7.0_ent
+    tag: 1.8.5_ent
 
   standalone:
     enabled: true
@@ -40,7 +41,7 @@ server:
   - "sleep 5 && cp /vault/userconfig/demo-vault/bootstrap.sh /tmp/bootstrap.sh && chmod +x /tmp/bootstrap.sh && /tmp/bootstrap.sh"
 
 csi:
-  enabled: true
+  enabled: false
 
   volumes:
   - name: tls
