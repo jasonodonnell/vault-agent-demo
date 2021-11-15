@@ -30,12 +30,6 @@ kubectl label secret demo-vault app=vault-agent-demo \
 
 ${DIR?}/postgres/run.sh
 
-helm install csi-secrets-store https://github.com/kubernetes-sigs/secrets-store-csi-driver/blob/master/charts/secrets-store-csi-driver-0.0.19.tgz?raw=true \
-  --wait --timeout=5m \
-  --namespace=vault \
-  --set linux.image.pullPolicy="IfNotPresent" \
-  --set grpcSupportedProviders="azure;gcp;vault"
-
 helm install vault \
   --namespace="${NAMESPACE?}" \
   -f ${DIR?}/values.yaml hashicorp/vault
